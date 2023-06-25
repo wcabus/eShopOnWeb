@@ -1,4 +1,4 @@
-using System.Net.Mime;
+﻿using System.Net.Mime;
 using Ardalis.ListStartupServices;
 using BlazorAdmin;
 using BlazorAdmin.Services;
@@ -61,6 +61,12 @@ builder.Services.AddMvc(options =>
     options.Conventions.Add(new RouteTokenTransformerConvention(
              new SlugifyParameterTransformer()));
 
+});
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = "Eshop.CSRF";
+    options.FormFieldName = "__CSRF";
+    options.HeaderName = "X-ESHOP-CSRF";
 });
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(options =>
