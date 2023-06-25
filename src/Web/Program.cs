@@ -1,4 +1,4 @@
-﻿using System.Net.Mime;
+using System.Net.Mime;
 using Ardalis.ListStartupServices;
 using BlazorAdmin;
 using BlazorAdmin.Services;
@@ -91,6 +91,13 @@ builder.Services.Configure<ServiceConfig>(config =>
 {
     config.Services = new List<ServiceDescriptor>(builder.Services);
     config.Path = "/allservices";
+});
+
+builder.Services.AddHsts(options =>
+{
+    options.MaxAge = TimeSpan.FromDays(365);
+    // options.IncludeSubDomains = true;
+    // options.Preload = true;
 });
 
 // blazor configuration
