@@ -1,4 +1,4 @@
-using System.Net.Mime;
+﻿using System.Net.Mime;
 using Ardalis.ListStartupServices;
 using BlazorAdmin;
 using BlazorAdmin.Services;
@@ -203,6 +203,21 @@ app.UseSecurityHeaders(x =>
     x.AddXssProtectionBlock();
     x.AddFrameOptionsDeny();
     x.AddContentTypeOptionsNoSniff();
+
+    x.AddContentSecurityPolicyReportOnly(csp =>
+    {
+        csp.AddDefaultSrc().Self();
+
+        csp.AddStyleSrc()
+            .Self()
+            .From("https://cdnjs.cloudflare.com")
+            .WithHashTagHelper();
+
+        csp.AddScriptSrc()
+            .Self()
+            .From("https://ajax.aspnetcdn.com")
+            .WithHashTagHelper();
+    });
 });
 
 app.MapControllerRoute("default", "{controller:slugify=Home}/{action:slugify=Index}/{id?}");
