@@ -22,14 +22,14 @@ public class RevokeAuthenticationEvents : CookieAuthenticationEvents
 
     public override async Task ValidatePrincipal(CookieValidatePrincipalContext context)
     {
-        var userId = context.Principal?.Claims.First(c => c.Type == ClaimTypes.Name);
-        var identityKey = context.Request.Cookies[ConfigureCookieSettings.IdentifierCookieName];
+        //var userId = context.Principal?.Claims.First(c => c.Type == ClaimTypes.Name);
+        //var identityKey = context.Request.Cookies[ConfigureCookieSettings.IdentifierCookieName];
 
-        if (_cache.TryGetValue($"{userId?.Value}:{identityKey}", out var revokeKeys))
-        {
-            _logger.LogDebug($"Access has been revoked for: {userId?.Value}.");
-            context.RejectPrincipal();
-            await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        }
+        //if (_cache.TryGetValue($"{userId?.Value}:{identityKey}", out var revokeKeys))
+        //{
+        //    _logger.LogDebug($"Access has been revoked for: {userId?.Value}.");
+        //    context.RejectPrincipal();
+        //    await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //}
     }
 }

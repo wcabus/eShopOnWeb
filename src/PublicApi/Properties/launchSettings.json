@@ -6,7 +6,8 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:5099;http://localhost:5098"
     },
     "PublicApi": {
       "commandName": "Project",
@@ -40,8 +41,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:52023",
-      "sslPort": 44339
+      "applicationUrl": "http://localhost:5098",
+      "sslPort": 5099
     }
   }
 }
