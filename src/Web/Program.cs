@@ -219,6 +219,11 @@ app.UseSecurityHeaders(x =>
             .Self()
             .From("https://ajax.aspnetcdn.com")
             .WithHashTagHelper();
+
+        csp.AddUpgradeInsecureRequests();
+        
+        csp.AddReportTo("csp-report-group");
+        csp.AddReportUri().To("/csp-report");
     });
 });
 
