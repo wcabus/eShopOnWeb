@@ -211,6 +211,8 @@ app.UseSecurityHeaders(x =>
         csp.AddStyleSrc()
             .Self()
             .From("https://cdnjs.cloudflare.com")
+            .UnsafeHashes() // allows inline styles using hashes
+            .WithHash256("aqNNdDLnnrDOnTNdkJpYlAxKVJtLt9CtFLklmInuUAE=") // hash for 'display:none' used by the validation summary
             .WithHashTagHelper();
 
         csp.AddScriptSrc()
