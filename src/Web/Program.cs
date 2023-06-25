@@ -68,6 +68,10 @@ builder.Services.AddAntiforgery(options =>
     options.FormFieldName = "__CSRF";
     options.HeaderName = "X-ESHOP-CSRF";
 });
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = "Eshop.Session";
+});
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(options =>
 {
