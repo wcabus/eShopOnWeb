@@ -7,6 +7,7 @@ using BlazorShared;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.eShopWeb;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
@@ -71,6 +72,10 @@ builder.Services.AddAntiforgery(options =>
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = "Eshop.Session";
+});
+builder.Services.Configure<CookieTempDataProviderOptions>(options =>
+{
+    options.Cookie.Name = "Eshop.Temp";
 });
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages(options =>
