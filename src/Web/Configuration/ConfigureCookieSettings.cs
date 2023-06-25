@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,10 +15,13 @@ public static class ConfigureCookieSettings
     {
         services.Configure<CookiePolicyOptions>(options =>
         {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                //TODO need to check that.
-                //options.CheckConsentNeeded = context => true;
-                // options.MinimumSameSitePolicy = SameSiteMode.Strict;
+            // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            //TODO need to check that.
+            //options.CheckConsentNeeded = context => true;
+            // options.MinimumSameSitePolicy = SameSiteMode.Strict;
+
+            options.Secure = CookieSecurePolicy.Always; // Or CookieSecurePolicy.SameAsRequest if you don't have HTTPS support yet
+            options.HttpOnly = HttpOnlyPolicy.Always;
         });
         services.ConfigureApplicationCookie(options =>
         {
