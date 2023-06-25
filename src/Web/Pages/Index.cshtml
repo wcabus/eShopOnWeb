@@ -43,3 +43,15 @@
         </div>
     }
 </div>
+
+@section scripts {
+    <script asp-add-content-to-csp>
+        // script to autosubmit the form when a filter is changed
+        $(function () {
+            $('.esh-catalog-filter').change(function () {
+                $(this).closest('form').submit();
+            });
+        });
+    
+    </script>
+}
