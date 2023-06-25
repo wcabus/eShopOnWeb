@@ -17,6 +17,7 @@ using Microsoft.eShopWeb.Web;
 using Microsoft.eShopWeb.Web.Configuration;
 using Microsoft.eShopWeb.Web.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using NetEscapades.AspNetCore.SecurityHeaders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -197,6 +198,12 @@ app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSecurityHeaders(x =>
+{
+    x.AddXssProtectionBlock();
+    x.AddFrameOptionsDeny();
+    x.AddContentTypeOptionsNoSniff();
+});
 
 app.MapControllerRoute("default", "{controller:slugify=Home}/{action:slugify=Index}/{id?}");
 app.MapRazorPages();
