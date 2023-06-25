@@ -1,4 +1,4 @@
-﻿using System.Net.Mime;
+using System.Net.Mime;
 using Ardalis.ListStartupServices;
 using BlazorAdmin;
 using BlazorAdmin.Services;
@@ -32,7 +32,10 @@ builder.Services.AddCookieSettings();
 
 builder.Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "EshopAuth";
+    });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
            .AddDefaultUI()
