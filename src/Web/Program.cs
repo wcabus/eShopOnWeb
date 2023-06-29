@@ -7,7 +7,9 @@ using BlazorShared;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.eShopWeb;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 using Microsoft.eShopWeb.Infrastructure.Data;
@@ -23,11 +25,19 @@ builder.Logging.AddConsole();
 
 Microsoft.eShopWeb.Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.AddServerHeader = false;
+});
+
 builder.Services.AddCookieSettings();
 
 builder.Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "eShop-Auth";
+    });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
            .AddDefaultUI()
@@ -38,6 +48,16 @@ builder.Services.AddScoped<ITokenClaimsService, IdentityTokenClaimService>();
 builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddCoreServices(builder.Configuration);
 builder.Services.AddWebServices(builder.Configuration);
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = "eShop-CSRF";
+    options.FormFieldName = "__CSRF";
+    options.HeaderName = "X-ESHOP-CSRF";
+});
+
+builder.Services.AddSession(options => options.Cookie.Name = "Eshop-Session");
+builder.Services.Configure<CookieTempDataProviderOptions>(x => x.Cookie.Name = "Eshop-TEMP");
 
 // Add memory cache services
 builder.Services.AddMemoryCache();
@@ -89,6 +109,13 @@ builder.Services.AddScoped<HttpService>();
 builder.Services.AddBlazorServices();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddHsts(x =>
+{
+    x.MaxAge = TimeSpan.FromDays(365);
+    x.IncludeSubDomains = true;
+    x.Preload = true;
+});
 
 var app = builder.Build();
 
@@ -167,6 +194,33 @@ app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSecurityHeaders(x =>
+{
+    x.AddContentSecurityPolicyReportOnly(csp =>
+    {
+        csp.AddDefaultSrc().Self();
+
+        csp.AddStyleSrc()
+            .Self()
+            .From("https://cdnjs.cloudflare.com")
+            .WithHash256("aqNNdDLnnrDOnTNdkJpYlAxKVJtLt9CtFLklmInuUAE=")
+            .UnsafeHashes()
+            .WithHashTagHelper();
+
+        csp.AddScriptSrc()
+            .Self()
+            .From("https://ajax.aspnetcdn.com")
+            .WithHashTagHelper();
+
+        csp.AddUpgradeInsecureRequests();
+        csp.AddReportUri().To("/csp-report");
+    });
+
+    x.AddFrameOptionsDeny();
+    x.AddContentTypeOptionsNoSniff();
+
+    
+});
 
 app.MapControllerRoute("default", "{controller:slugify=Home}/{action:slugify=Index}/{id?}");
 app.MapRazorPages();

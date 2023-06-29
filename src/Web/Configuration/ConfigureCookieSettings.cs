@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +18,9 @@ public static class ConfigureCookieSettings
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 //TODO need to check that.
                 //options.CheckConsentNeeded = context => true;
-                // options.MinimumSameSitePolicy = SameSiteMode.Strict;
+                options.HttpOnly = HttpOnlyPolicy.Always;
+                options.Secure = CookieSecurePolicy.Always;
+            options.MinimumSameSitePolicy = SameSiteMode.Lax;
         });
         services.ConfigureApplicationCookie(options =>
         {
@@ -27,6 +30,7 @@ public static class ConfigureCookieSettings
             options.LogoutPath = "/Account/Logout";
             options.Cookie = new CookieBuilder
             {
+                Name = IdentifierCookieName,
                 IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
             };
         });

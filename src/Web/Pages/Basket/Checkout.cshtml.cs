@@ -90,8 +90,12 @@ public class CheckoutModel : PageModel
         if (_username != null) return;
 
         _username = Guid.NewGuid().ToString();
-        var cookieOptions = new CookieOptions();
-        cookieOptions.Expires = DateTime.Today.AddYears(10);
+        var cookieOptions = new CookieOptions
+        {
+            IsEssential = true,
+            Expires = DateTime.Today.AddYears(10),
+            SameSite = SameSiteMode.Strict,
+        };
         Response.Cookies.Append(Constants.BASKET_COOKIENAME, _username, cookieOptions);
     }
 }
