@@ -27,6 +27,7 @@ public static class ConfigureCookieSettings
             options.LogoutPath = "/Account/Logout";
             options.Cookie = new CookieBuilder
             {
+                Name = IdentifierCookieName,
                 IsEssential = true // required for auth to work without explicit user consent; adjust to suit your privacy policy
             };
         });
