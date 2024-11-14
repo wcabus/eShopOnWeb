@@ -7,6 +7,7 @@ using BlazorShared;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.eShopWeb;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
@@ -19,6 +20,11 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(x =>
+{
+    x.AddServerHeader = false;
+});
+
 builder.Logging.AddConsole();
 
 Microsoft.eShopWeb.Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
@@ -27,7 +33,27 @@ builder.Services.AddCookieSettings();
 
 builder.Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "EshopAuth";
+    });
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = "Eshop.CSRF";
+    options.FormFieldName = "__CSRF";
+    options.HeaderName = "X-ESHOP-CSRF";
+});
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = "Eshop.Session";
+});
+builder.Services.Configure<CookieTempDataProviderOptions>(options =>
+{
+    options.Cookie.Name = "Eshop.Temp";
+});
+
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
            .AddDefaultUI()
