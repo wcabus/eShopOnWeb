@@ -3,6 +3,18 @@
     ViewData["Title"] = "Catalog";
     @model IndexModel
 }
+@section scripts 
+{
+    <script asp-add-content-to-csp>
+			// script to autosubmit the form when a filter is changed
+			$(function () {
+				$('.esh-catalog-filter').change(function () {
+					$(this).closest('form').submit();
+				});
+			});
+		</script>
+}
+
 <section class="esh-catalog-hero">
     <div class="container">
         <img class="esh-catalog-title" src="~/images/main_banner_text.png" />

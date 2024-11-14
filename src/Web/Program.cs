@@ -38,6 +38,14 @@ builder.Services
         options.Cookie.Name = "EshopAuth";
     });
 
+builder.Services.AddHsts(options =>
+{
+    options.MaxAge = TimeSpan.FromDays(356);
+    // options.IncludeSubDomains = true;
+    // options.Preload = true;
+});
+
+
 builder.Services.AddAntiforgery(options =>
 {
     options.Cookie.Name = "Eshop.CSRF";
@@ -192,6 +200,37 @@ app.UseRouting();
 app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSecurityHeaders(x =>
+{
+    x.AddXssProtectionBlock(); // or remove it entirely!
+    x.AddFrameOptionsDeny();
+    x.AddContentTypeOptionsNoSniff();
+
+    x.AddContentSecurityPolicyReportOnly(csp =>
+    {
+        csp.AddDefaultSrc().Self();
+
+        csp.AddStyleSrc()
+            .Self()
+            .From("https://cdnjs.cloudflare.com")
+            .UnsafeHashes() // allows inline styles using hashes
+            .WithHash256("aqNNdDLnnrDOnTNdkJpYlAxKVJtLt9CtFLklmInuUAE=")
+            .WithHashTagHelper();
+
+        csp.AddScriptSrc()
+            .Self()
+            .From("https://ajax.aspnetcdn.com")
+            .WithHashTagHelper();
+
+        csp.AddUpgradeInsecureRequests();
+
+        csp.AddReportTo("csp-report-group");
+        csp.AddReportUri().To("/csp-report");
+
+    });
+
+});
 
 
 app.MapControllerRoute("default", "{controller:slugify=Home}/{action:slugify=Index}/{id?}");
